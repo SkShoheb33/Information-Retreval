@@ -1,7 +1,8 @@
 import pandas as pd
+from collections import Counter
 class Bayes:
-    def __init__(self):
-        self.data = pd.read_excel('data.xlsx')
+    def __init__(self,csv_file):
+        self.data = pd.read_excel(csv_file)
         self.tables = {}
         self.table_names = self.data.columns[1:-1]
         self.predict = self.data.columns[-1]
@@ -19,16 +20,24 @@ class Bayes:
                     )/len(self.data[self.data[self.predict]==row])    
     def classifyQuery(self,query):
         query = query.split()
+        count = dict(Counter(query))
+        query = list(count.keys())
         result = 0
         m = 0
-        for c in self.predicted_values:
-            a = 1
-            for k,i in zip(self.tables,query):
-                a *= self.tables[k][c][i]
-            if m<a:
-                m = a
-                result = c
-        print(result)
+        try:
+            for c in self.predicted_values:
+                a = len(self.data[self.data[self.predict]==c])/len(self.data[self.predict])
+                for k,i in zip(self.tables,query):
+                    a *= (self.tables[k][c][i]**count[i])
+                if m<a:
+                    m = a
+                    result = c
+            print("The data predict : ",result)
+        except KeyError:
+            print("Unable to predict result")
+            print("Please Provide relavant data / check splelling mistakes..... ")
+        finally:
+            print("Successfully executed")
             
-obj = Bayes()
-obj.classifyQuery("Sunny Hot High Strong")
+obj = Bayes('data.xlsx')
+obj.classifyQuery("Rain Mild High Strong")
