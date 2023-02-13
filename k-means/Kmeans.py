@@ -1,12 +1,18 @@
-from random import random
+# from random import random
+import random
 class Kmeans:
     def __init__(self,docIds,n):
         self.numberOfClusters = n
         self.documents = docIds
         self.clusters = {}
+        seeds = []
         for i in range(self.numberOfClusters):
             try:
-                self.clusters[f'cluster {i+1}'] = [[],docIds[i]]
+                k = random.randint(0,self.numberOfClusters)
+                while k in seeds:
+                    k = random.randint(0,self.numberOfClusters)
+                seeds.append(k)
+                self.clusters[f'cluster {i+1}'] = [[],docIds[k]]
             except IndexError:
                 print("Enter valid number of clusters.... ")
     def mean(self,s):
@@ -32,7 +38,7 @@ class Kmeans:
                 for cluster in self.clusters:
                     self.clusters[cluster][0] = present[cluster]
                     self.clusters[cluster][1] = self.mean(present[cluster]) 
-l = [1,2,3,4,50,60,70,80,90,100,110]
+l = [1,2,3,4,7,12,8,9,11,19]
 n = int(input("Enter number of clusters : "))
 obj = Kmeans(l,n)
 obj.clusturing()
